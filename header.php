@@ -18,7 +18,7 @@
 <?php
 if(!empty($_POST))
 {
-	if($_POST['action'] == 'Sign up')
+	if($_POST['action'] == 'Sign up') // hardcode is bad, i know. its just for fun
 	{
 		echo 'wtf';
 		header('Location: registration.php');

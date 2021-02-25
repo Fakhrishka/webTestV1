@@ -3,10 +3,6 @@ class Logger
 {
 	static function Login(string $sLogin, string $sPass, $db)
 	{
-		// checking data in DB
-		// if(!($db = mysqli_connect("localhost", "root", "", "autospot_test")))
-		// 	echo 'pizdes';
-
 		$query = mysqli_query($db, "SELECT USER_ID,PASS FROM users WHERE LOGIN='".mysqli_real_escape_string($db, $sLogin)."'");
 		$arData = mysqli_fetch_assoc($query);
 
@@ -21,7 +17,6 @@ class Logger
 
 			echo 'Login finished...<br>';
 			self::FinalCheckUp($arData['USER_ID'], $sNewHash, $db);
-			exit();
 		}
 		else
 		{
@@ -33,24 +28,17 @@ class Logger
 
 	static function Register(string $sLogin, string $sPass, string $sUserType, $db)
 	{
-			// register new user
-			// if(!($db = mysqli_connect("localhost", "root", "", "autospot_test")))
-			// 	echo 'pizdes';
+		$query = mysqli_query($db, "SELECT USER_ID FROM users WHERE LOGIN='".mysqli_real_escape_string($db, $sLogin)."'");
+		if(mysqli_num_rows($query) > 0)
+		{
+			echo 'user exists...';
+			return false;
+		}
 
-
-			$query = mysqli_query($db, "SELECT USER_ID FROM users WHERE LOGIN='".mysqli_real_escape_string($db, $sLogin)."'");
-			if(mysqli_num_rows($query) > 0)
-			{
-					echo 'user exists...';
-					return false;
-			}
-
-			$password = md5(md5(trim($sPass)));
-			if(!mysqli_query($db,"INSERT INTO users SET LOGIN='".$sLogin."', PASS='".$password."', USER_TYPE='".$sUserType."'"))
-					echo 'user not added';
-			echo 'Register finished...<br>';
-			self::Login($sLogin, $sPass, $db);
-			exit();
+		if(!mysqli_query($db,"INSERT INTO users SET LOGIN='".$sLogin."', PASS='".md5(md5(trim($sPass)))."', USER_TYPE='".$sUserType."'"))
+			echo 'user not added';
+		echo 'Register finished...<br>';
+		self::Login($sLogin, $sPass, $db);
 
 	}
 
@@ -74,9 +62,6 @@ class Logger
 
 	static function ChangePass(string $sNewPass, string $sOldPass, $db)
 	{
-		// if(!($db = mysqli_connect("localhost", "root", "", "autospot_test")))
-		// 	echo 'pizdes';		
-
 		$query = mysqli_query($db, "SELECT USER_ID,PASS FROM users WHERE USER_ID='".$_COOKIE['id']."'");
 		$arData = mysqli_fetch_assoc($query);
 
@@ -91,7 +76,6 @@ class Logger
 
 			echo 'Pass change finished...<br>';
 			self::FinalCheckUp($arData['USER_ID'], $sNewHash, $db);
-			exit();
 		}
 		else
 			echo 'Old password is wrong';
@@ -100,10 +84,6 @@ class Logger
 
 	static function FinalCheckUp(int $nUserId, string $sCookieHash, $db)
 	{
-		// if(!($db = mysqli_connect("localhost", "root", "", "autospot_test")))
-		// 	echo 'pizdes';
-
-
 		$query = mysqli_query($db, "SELECT LOGIN,USER_ID,HASH FROM users WHERE USER_ID = '".intval($nUserId)."' LIMIT 1");
 		$arUserData = mysqli_fetch_assoc($query);
 
@@ -115,9 +95,7 @@ class Logger
 			echo "Cookie error"; // CATCH THIS MF
 		}
 		else
-		{
 			header("Location: /");
-		}
 	}
 }
 ?>

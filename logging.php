@@ -7,8 +7,6 @@
 </div>
 
 
-
-
 <?php 
 if(!include_once('functionality/logger.php'))
 	echo 'failed to include';
